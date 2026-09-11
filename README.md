@@ -1,15 +1,18 @@
-# Business-Automation-OS
-This repo is for our BE project - Business Automation OS :  an agentic platform for automating end-to-end business workflows across recruitment, employee onboarding, leave management, procurement, and more.
+Business Automation OS
+
+Business Automation OS is our Fourth-Year BE Final Year Project — an agentic platform designed to automate end-to-end business workflows across recruitment, employee onboarding, leave management, procurement, and more.
 
 Overview
 
-Business Automation OS is our Fourth-Year BE Final Year Project focused on building a general-purpose agentic system that can understand, coordinate, and execute business workflows with minimal manual intervention.
+Business Automation OS is a general-purpose agentic system focused on understanding, coordinating, and executing business workflows with minimal manual intervention.
 
-Instead of treating each business process as a separate application, the system is designed as a common automation platform where different workflows can be built and orchestrated using AI agents, tools, business rules, and integrations.
+Instead of building a separate application for every business process, the system provides a common automation platform where different workflows can be built and orchestrated using AI agents, workflow logic, business rules, tools, and external integrations.
+
+The platform is designed to support human oversight where required while automating repetitive coordination and decision-support tasks.
 
 Initial Use Case — Recruitment Automation
 
-The first major workflow we are implementing is an end-to-end recruitment automation system.
+The first major workflow being implemented is an end-to-end recruitment automation system.
 
 The recruitment workflow aims to automate:
 
@@ -21,11 +24,11 @@ Calendar-based interview scheduling
 Candidate evaluation
 Final evaluation and recommendation reports
 
-The goal is to reduce manual coordination while maintaining a structured and auditable recruitment process.
+The goal is to reduce manual coordination while maintaining a structured, auditable, and consistent recruitment process.
 
 Planned Business Workflows
 
-The Business Automation OS is designed to support multiple business processes, including:
+The Business Automation OS is designed to support multiple business processes.
 
 Recruitment
 
@@ -33,113 +36,181 @@ Automate the candidate journey from resume screening to final evaluation.
 
 Employee Onboarding
 
-Automate onboarding activities such as document collection, task assignment, approvals, account setup, and onboarding checklists.
+Automate onboarding activities such as:
 
+Document collection
+Task assignment
+Approval workflows
+Account setup
+Onboarding checklists
+Notifications and follow-ups
 Employee Leave Management
 
-Handle leave requests, approvals, policy checks, notifications, and calendar updates.
+Automate:
 
+Leave requests
+Policy validation
+Manager approvals
+Notifications
+Calendar updates
+Leave tracking
 Procurement
 
-Automate procurement workflows including purchase requests, approvals, vendor interactions, purchase orders, and tracking.
+Automate procurement workflows including:
 
+Purchase requests
+Approval workflows
+Vendor interactions
+Purchase orders
+Procurement tracking
+Notifications and follow-ups
 Future Workflows
 
-The platform can be extended to additional business processes as the system evolves.
+The platform can be extended to support additional business workflows as the system evolves.
 
 Core Concept
 
 The system is built around an agentic workflow orchestration model.
 
-                    Business Automation OS
-                             │
-             ┌───────────────┼───────────────┐
-             │               │               │
-          Agents          Workflows        Tools
-             │               │               │
-             └───────────────┼───────────────┘
-                             │
-                    Business Processes
-                             │
-        ┌────────────────────┼────────────────────┐
-        │                    │                    │
-    Recruitment         Onboarding          Procurement
-        │                    │                    │
-   Resume Screening     Task Automation     Approvals
-   AI Interview         Documents           Vendors
-   Proctoring            Accounts            Purchase Orders
-   Scheduling            Notifications       Tracking
+                         Business Automation OS
+                                  │
+                 ┌────────────────┼────────────────┐
+                 │                │                │
+              Agents          Workflows          Tools
+                 │                │                │
+                 └────────────────┼────────────────┘
+                                  │
+                         Business Processes
+                                  │
+             ┌────────────────────┼────────────────────┐
+             │                    │                    │
+        Recruitment          Onboarding           Procurement
+             │                    │                    │
+      Resume Screening      Task Automation       Approvals
+      AI Interview          Documents             Vendors
+      Proctoring            Accounts              Purchase Orders
+      Scheduling            Notifications         Tracking
+      Evaluation
 
 
-Agents can reason about tasks, use available tools, interact with business systems, and coordinate multiple steps in a workflow.
+Agents can reason about tasks, use available tools, interact with business systems, and coordinate multiple steps within a workflow.
 
 Key Objectives
 Automate repetitive business processes
 Reduce manual coordination
 Enable AI-driven decision support
-Orchestrate multi-step workflows
-Integrate with external tools and services
+Orchestrate complex, multi-step workflows
+Integrate with external tools and business systems
 Maintain workflow state and auditability
 Provide a reusable foundation for multiple business use cases
-Minimize human intervention while keeping humans in control of critical decisions
+Support human-in-the-loop review for critical decisions
+Enable new workflows to be added without rebuilding the entire platform
 Project Architecture
 
-The system is planned around modular components such as:
+The system is designed around modular components:
 
-Agent Layer — AI agents responsible for reasoning and task execution
-Workflow Engine — Coordinates multi-step business processes
-Tool/Integration Layer — Connects agents with external services and internal systems
-Business Rules — Handles organization-specific policies and constraints
-Data Layer — Stores workflow state, users, tasks, candidates, and other business data
-Authentication & Authorization — Controls access to business processes and data
-Human-in-the-Loop Layer — Allows human review and approval where required
-Reporting Layer — Generates summaries, evaluations, and workflow reports
+Agent Layer
+
+AI agents responsible for reasoning, decision support, and task execution.
+
+Workflow Engine
+
+Coordinates multi-step business processes and manages workflow state.
+
+Tool & Integration Layer
+
+Connects agents and workflows with external services and internal business systems.
+
+Business Rules
+
+Handles organization-specific policies, constraints, approvals, and validation logic.
+
+Data Layer
+
+Stores workflow state, users, tasks, candidates, business records, and other application data.
+
+Authentication & Authorization
+
+Controls access to workflows, business data, and system functionality based on user roles and permissions.
+
+Human-in-the-Loop Layer
+
+Allows human review, approval, or intervention at important points in a workflow.
+
+Reporting Layer
+
+Generates summaries, evaluations, recommendations, and workflow reports.
+
 Technology Stack
-
-This section will be updated as the implementation is finalized.
-
 Frontend
-
-TBD
-
+React
+JavaScript / TypeScript
 Backend
-
-TBD
-
-AI / Agent Framework
-
-TBD
-
+Python
+FastAPI
 Database
-
-TBD
-
+PostgreSQL
+AI & Agent Framework
+LangGraph
+Large Language Models (LLMs)
 Integrations
+Calendar services
+Email services
+Other external business tools and APIs
+Development & Version Control
+Git
+GitHub
 
-Calendar
-Email
-Other business services
+The technology stack may evolve as the project develops.
 
-Deployment
+Project Structure
 
-TBD
+The repository is organized to keep the frontend, backend, agent workflows, and supporting components modular.
+
+Business-Automation-OS/
+│
+├── frontend/             # React frontend
+│
+├── backend/              # FastAPI backend
+│   ├── app/
+│   ├── agents/           # Agentic workflows / LangGraph
+│   ├── api/              # API routes
+│   ├── models/           # Database models
+│   └── services/         # Business services
+│
+├── docs/                 # Project documentation
+│
+├── tests/                # Automated tests
+│
+├── .env.example          # Environment variable template
+├── .gitignore
+├── README.md
+└── LICENSE
+
+
+The structure may evolve as development progresses.
+
 Project Status
 
-🚧 Currently under development
+🚧 Currently Under Development
 
-Phase 1
+Phase 1 — Platform Foundation
  Repository and project structure
- Core architecture
- Agent framework
- Workflow orchestration
+ Core system architecture
+ Backend setup with FastAPI
+ React frontend setup
+ PostgreSQL database setup
+ Agent framework setup
+ LangGraph workflow orchestration
  Authentication and authorization
-Phase 2 — Recruitment Workflow
+ Core workflow infrastructure
+Phase 2 — Recruitment Automation
  Job description processing
  Resume screening
  Candidate assessment
- AI interview
- Interview/assessment proctoring
- Calendar scheduling
+ AI-led interview
+ Interview and assessment proctoring
+ Calendar-based scheduling
  Candidate evaluation
  Final recruitment report
 Phase 3 — Business Automation Workflows
@@ -151,17 +222,18 @@ Team
 
 Fourth-Year BE Final Year Project
 
-Team members:
-
+Team Members
 Member 1 — TBD
 Member 2 — TBD
 Member 3 — TBD
 Member 4 — TBD
 Project Goals
 
-The long-term goal is to build a reusable Business Automation OS where new business workflows can be added without building an entirely new application for every process.
+The long-term goal is to build a reusable Business Automation OS where new business workflows can be added without requiring an entirely new application for every process.
 
-The recruitment system is the first use case through which we will validate the platform's ability to understand, orchestrate, and execute complex real-world business workflows.
+The recruitment automation system is the first major use case through which we will validate the platform's ability to understand, orchestrate, and execute complex real-world business workflows.
+
+As the platform evolves, the same underlying agentic architecture will be extended to workflows such as employee onboarding, leave management, procurement, and other business operations.
 
 License
 
