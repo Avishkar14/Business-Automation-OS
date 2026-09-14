@@ -140,7 +140,7 @@ python -m app.test_db
 
 ### Method B: Interactive Swagger API Form
 1. Start your application server (see the *Running the Application* section below).
-2. Open your web browser and navigate to the interactive dashboard at: [http://127.0.0](http://127.0.0)
+2. Open your web browser and navigate to the interactive dashboard at: http://127.0.0.1:8000/docs
 3. Expand your target workspace category (e.g., `POST /jobs` or `POST /candidates`).
 4. Click **Try it out**, fill in the automatically generated JSON payload fields, and hit **Execute** to write mock values straight to your tables.
 
@@ -155,8 +155,8 @@ cd app
 uvicorn main:app --reload
 ```
 
-* **Local API Base URL:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-* **Interactive Swagger Documentation Tool:** [http://127.0.0](http://127.0.0)
+- **Local API Base URL:** http://127.0.0.1:8000
+- **Interactive Swagger Documentation:** http://127.0.0.1:8000/docs
 
 ---
 
