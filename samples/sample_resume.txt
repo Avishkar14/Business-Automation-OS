@@ -1,0 +1,19 @@
+Shivam Chopade
+Backend / AI Engineer
+
+Experience
+Software Engineer, 2023–present
+- Built Python services for document intake and candidate screening
+- Integrated Groq LLM APIs to score resumes against job descriptions
+- Shipped REST APIs consumed by an internal dashboard
+- Parsed PDF and DOCX files with pypdf and python-docx
+
+Junior Developer, 2022–2023
+- Maintained Python automation scripts and Git-based code reviews
+- Wrote technical notes for internal tooling
+
+Skills
+Python, REST APIs, Git, PostgreSQL, Docker, LLM APIs, PDF parsing
+
+Education
+B.E. Computer Engineering

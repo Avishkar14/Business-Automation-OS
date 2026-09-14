@@ -95,3 +95,58 @@ The system is built around an **agentic workflow orchestration model**.
       Proctoring            Accounts              Purchase Orders
       Scheduling            Notifications         Tracking
       Evaluation
+```
+
+## Resume <-> JD Matching (Screening)
+
+Week 1–2 screening agent: parse a resume, score it against a job description with Groq, and return structured JSON for the orchestrator / DB layer.
+
+### Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+Copy `.env.example` to `.env` and set `GROQ_API_KEY`. On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+$env:GROQ_API_KEY = "gsk_..."
+```
+
+### Run
+
+```bash
+python -m screening.main --resume samples/sample_resume.txt --jd samples/sample_jd.txt
+python -m screening.main --resume-dir samples --jd samples/sample_jd.txt
+python -m unittest discover -s tests -v
+```
+
+### Orchestrator integration
+
+```python
+from screening import parse_resume, match_resume_to_jd
+
+resume_text = parse_resume("candidate.pdf")
+result = match_resume_to_jd(resume_text, jd_text)
+
+if result.is_shortlisted():  # default threshold 60
+    save_to_db(candidate_id, result.to_dict())
+```
+
+`match_batch()` scores many candidates; `sort_by_score()` ranks them. Shortlist threshold can be set with `SHORTLIST_THRESHOLD` in `.env`. Default model is `openai/gpt-oss-20b` (`GROQ_MODEL`).
+
+### Interactive Showcase Dashboard
+
+Open the standalone HTML dashboard directly in your browser:
+
+```powershell
+Start-Process dashboard.html
+```
+
+Or open `dashboard.html` in any modern web browser. Features:
+- Candidate profile presets and animated radial scoring gauge
+- Drag-and-drop resume intake & client-side screening parser
+- Direct terminal JSON paste & live re-rendering
+- Formatted report export / print to PDF
+

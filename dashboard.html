@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Automation OS — Resume Screening Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #080c14;
+      --bg-surface: #0e1526;
+      --bg-surface-elevated: #151f38;
+      --bg-surface-glass: rgba(16, 24, 44, 0.72);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --border-hover: rgba(99, 102, 241, 0.6);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.3);
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.3);
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --danger: #ef4444;
+      --danger-glow: rgba(239, 68, 68, 0.3);
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 1px 1px var(--border-subtle);
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Outfit', 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(14, 165, 233, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Container */
+    .dashboard-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 24px 28px 60px;
+    }
+
+    /* Top Navigation / Brand Header */
+    header.header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .brand-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #ffffff;
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-text p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-pill.status-engine {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .badge-pill.status-engine .dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--success-glow);
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+      transform: translateY(-1px);
+    }
+
+    /* Resume Upload Intake Card */
+    .intake-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 22px 26px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intake-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #6366f1, #3b82f6, #10b981);
+    }
+
+    .intake-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .intake-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+
+    .intake-title svg {
+      width: 22px;
+      height: 22px;
+      color: var(--primary);
+    }
+
+    .upload-zone-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 992px) {
+      .upload-zone-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dropzone {
+      border: 2px dashed rgba(99, 102, 241, 0.35);
+      background: rgba(99, 102, 241, 0.03);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.08);
+      box-shadow: 0 0 24px rgba(99, 102, 241, 0.2);
+    }
+
+    .dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .dropzone:hover .drop-icon {
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    .drop-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .drop-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .drop-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .format-pills {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .format-pill {
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+    }
+
+    /* Intake Right Info Box */
+    .intake-info-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .intake-file-status {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .file-status-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .loaded-file-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      color: #34d399;
+      font-size: 0.84rem;
+      font-family: var(--font-mono);
+      word-break: break-all;
+    }
+
+    .loaded-file-badge svg {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+    }
+
+    .quick-sample-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .quick-sample-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sample-btn {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sample-btn:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+      color: var(--text-primary);
+    }
+
+    /* Resume Text Collapsible Drawer */
+    .resume-preview-panel {
+      margin-top: 16px;
+      display: none;
+      background: #050810;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .resume-preview-header {
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .resume-preview-text {
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #94a3b8;
+      max-height: 160px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    /* Candidate Switcher Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      margin-bottom: 24px;
+    }
+
+    .preset-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-right: 4px;
+    }
+
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .preset-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .preset-chip.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--primary);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .preset-chip .score-tag {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .preset-chip.active .score-tag {
+      background: #4f46e5;
+      color: #ffffff;
+    }
+
+    .system-info-pills {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .info-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-pill strong {
+      color: var(--text-primary);
+    }
+
+    /* Workflow Pipeline Stepper */
+    .pipeline-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+
+    .pipeline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .pipeline-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .pipeline-status {
+      font-size: 0.78rem;
+      color: var(--success);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      position: relative;
+    }
+
+    @media (max-width: 860px) {
+      .stepper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .step-item.completed {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .step-item.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 14px rgba(99, 102, 241, 0.25);
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .step-item.completed .step-number {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .step-item.active .step-number {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .step-content {
+      overflow: hidden;
+    }
+
+    .step-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .step-detail {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Candidate Hero Card */
+    .hero-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #6366f1, #10b981, #3b82f6);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border: 2px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffffff;
+      box-shadow: 0 0 24px rgba(99, 102, 241, 0.2);
+    }
+
+    .candidate-name {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .target-role {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    /* Radial Gauge */
+    .gauge-wrapper {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 12;
+    }
+
+    .gauge-progress {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 502;
+      stroke-dashoffset: 50;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+      filter: drop-shadow(0 0 8px var(--success-glow));
+    }
+
+    .gauge-content {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-value {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .gauge-max {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .verdict-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      transition: all 0.3s ease;
+    }
+
+    .verdict-pill.strong_match {
+      background: var(--success-bg);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 20px var(--success-glow);
+    }
+
+    .verdict-pill.possible_match {
+      background: var(--warning-bg);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 20px var(--warning-glow);
+    }
+
+    .verdict-pill.weak_match,
+    .verdict-pill.no_match {
+      background: var(--danger-bg);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      box-shadow: 0 0 20px var(--danger-glow);
+    }
+
+    /* Decision banner */
+    .shortlist-banner {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .shortlist-banner.passed {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+    }
+
+    .shortlist-banner.failed {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    /* Quick stats 2x2 */
+    .stats-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-heading);
+    }
+
+    /* Content Area */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Summary Card */
+    .summary-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px 26px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card-title svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    .summary-quote {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.65;
+      position: relative;
+      padding-left: 20px;
+      border-left: 3px solid var(--primary);
+      font-style: normal;
+    }
+
+    /* Split evaluation grid */
+    .eval-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .eval-split-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .eval-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .eval-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .eval-panel-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eval-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+    }
+
+    .eval-count.matched {
+      background: var(--success-bg);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .eval-count.missing {
+      background: var(--danger-bg);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .req-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .req-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      line-height: 1.45;
+    }
+
+    .req-item.satisfied {
+      border-left: 3px solid var(--success);
+    }
+
+    .req-item.missing {
+      border-left: 3px solid var(--danger);
+      background: rgba(239, 68, 68, 0.03);
+    }
+
+    .req-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .req-icon.check {
+      color: var(--success);
+    }
+
+    .req-icon.cross {
+      color: var(--danger);
+    }
+
+    .empty-state-card {
+      padding: 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    /* Skills & Red Flags Row */
+    .skills-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .skills-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .skill-tag {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #c7d2fe;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .skill-tag:hover {
+      background: rgba(99, 102, 241, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .skill-tag .skill-check {
+      color: var(--success);
+      font-size: 0.9rem;
+    }
+
+    /* Red Flags Card */
+    .audit-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .audit-clean {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-sm);
+      color: #6ee7b7;
+      font-size: 0.88rem;
+    }
+
+    .audit-clean svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      color: var(--success);
+    }
+
+    .flag-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius-sm);
+      color: #fca5a5;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .flag-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--danger);
+      margin-top: 1px;
+    }
+
+    /* Raw Terminal & JSON Section */
+    .terminal-section {
+      background: #050810;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-card);
+      margin-top: 24px;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .terminal-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-body {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #93c5fd;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      max-height: 280px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    /* Modal for Terminal Paste */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 680px;
+      padding: 26px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .btn-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      height: 220px;
+      background: #050810;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #94a3b8;
+      resize: vertical;
+    }
+
+    .modal-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .header-actions, .controls-bar, .intake-card, .modal-backdrop, .btn {
+        display: none !important;
+      }
+      .dashboard-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .hero-card, .summary-card, .eval-panel, .skills-section, .audit-section, header.header-nav {
+        background: #ffffff !important;
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        color: #000000 !important;
+      }
+      .gauge-bg { stroke: #eeeeee !important; }
+      .gauge-progress { stroke: #10b981 !important; filter: none !important; }
+      .candidate-name, .card-title, .brand-text h1, .gauge-value {
+        color: #000000 !important;
+      }
+      .summary-quote {
+        color: #333333 !important;
+        border-color: #333333 !important;
+      }
+      .skill-tag {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Header -->
+    <header class="header-nav">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>
+            Business Automation OS
+            <span class="badge-pill status-engine">
+              <span class="dot"></span> Groq LLM Screening
+            </span>
+          </h1>
+          <p>BE Final Year Project &bull; Agentic Recruitment Orchestrator</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="scrollToUpload()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Upload Resume
+        </button>
+        <button class="btn btn-secondary" onclick="openPasteModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg>
+          Paste Terminal JSON
+        </button>
+        <button class="btn btn-primary" onclick="window.print()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Export Report
+        </button>
+      </div>
+    </header>
+
+    <!-- NEW: RESUME INTAKE & UPLOAD SECTION -->
+    <section class="intake-card" id="upload-section">
+      <div class="intake-header">
+        <div class="intake-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          Candidate Resume Intake &amp; Screening Uploader
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="toggleResumePreview()">
+            Toggle File Text Preview
+          </button>
+        </div>
+      </div>
+
+      <div class="upload-zone-wrapper">
+        <!-- Interactive Drag & Drop Area -->
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="resume-file-input" accept=".txt,.pdf,.docx" onchange="handleFileSelect(this.files)">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="drop-title">Drag &amp; Drop Candidate Resume Here</div>
+          <div class="drop-sub">or click to browse from your computer</div>
+          <div class="format-pills">
+            <span class="format-pill">.TXT</span>
+            <span class="format-pill">.PDF</span>
+            <span class="format-pill">.DOCX</span>
+          </div>
+        </div>
+
+        <!-- Intake Metadata & Quick Samples -->
+        <div class="intake-info-box">
+          <div class="intake-file-status">
+            <div class="file-status-title">Active Resume Loaded</div>
+            <div class="loaded-file-badge" id="loaded-file-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span id="loaded-file-name">samples/sample_resume.txt (573 chars)</span>
+            </div>
+          </div>
+
+          <div class="quick-sample-links">
+            <div class="quick-sample-title">Fast Load Repo Samples:</div>
+            <button class="sample-btn" onclick="loadSampleResume('shivam')">
+              <span>📄 sample_resume.txt (Shivam Chopade)</span>
+              <strong style="color: #34d399;">90%</strong>
+            </button>
+            <button class="sample-btn" onclick="loadSampleResume('priya')">
+              <span>📄 weak_resume.txt (Priya Shah)</span>
+              <strong style="color: #f87171;">18%</strong>
+            </button>
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 8px;">
+            <button class="btn btn-success" style="flex: 1; justify-content: center; font-size: 0.82rem;" onclick="triggerScreeningEvaluation()">
+              ⚡ Run AI Screening
+            </button>
+            <button class="btn btn-secondary" style="font-size: 0.82rem;" title="Copy terminal command for this resume" onclick="copyTerminalCmd()">
+              📋 Copy CLI
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsible Resume Preview Drawer -->
+      <div class="resume-preview-panel" id="resume-preview-panel">
+        <div class="resume-preview-header">
+          <span id="preview-file-title">Resume Content: samples/sample_resume.txt</span>
+          <span id="preview-char-count">573 characters</span>
+        </div>
+        <div class="resume-preview-text" id="resume-preview-text">Shivam Chopade
+Backend / AI Engineer
+
+Experience
+Software Engineer, 2023–present
+- Built Python services for document intake and candidate screening
+- Integrated Groq LLM APIs to score resumes against job descriptions
+- Shipped REST APIs consumed by an internal dashboard
+- Parsed PDF and DOCX files with pypdf and python-docx
+
+Junior Developer, 2022–2023
+- Maintained Python automation scripts and Git-based code reviews
+- Wrote technical notes for internal tooling
+
+Skills
+Python, REST APIs, Git, PostgreSQL, Docker, LLM APIs, PDF parsing
+
+Education
+B.E. Computer Engineering</div>
+      </div>
+    </section>
+
+    <!-- Controls / Candidate Presets -->
+    <div class="controls-bar">
+      <div class="preset-selector">
+        <span class="preset-label">Quick Profile Presets:</span>
+        <button class="preset-chip active" id="chip-shivam" onclick="loadCandidate('shivam')">
+          <span>Shivam Chopade</span>
+          <span class="score-tag">90% Match</span>
+        </button>
+        <button class="preset-chip" id="chip-alex" onclick="loadCandidate('alex')">
+          <span>Alex Rivera</span>
+          <span class="score-tag">68% Match</span>
+        </button>
+        <button class="preset-chip" id="chip-priya" onclick="loadCandidate('priya')">
+          <span>Priya Shah</span>
+          <span class="score-tag">18% Match</span>
+        </button>
+      </div>
+
+      <div class="system-info-pills">
+        <div class="info-pill">
+          <span>Target JD:</span>
+          <strong>Backend Python Engineer</strong>
+        </div>
+        <div class="info-pill">
+          <span>Threshold:</span>
+          <strong>60 / 100</strong>
+        </div>
+        <div class="info-pill">
+          <span>Model:</span>
+          <strong>gpt-oss-20b</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agentic Workflow Stepper -->
+    <div class="pipeline-container">
+      <div class="pipeline-header">
+        <span class="pipeline-title">Recruitment Automation Pipeline Lifecycle</span>
+        <span class="pipeline-status" id="pipeline-status-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Stage 2 Completed &bull; Candidate Shortlisted
+        </span>
+      </div>
+      <div class="stepper">
+        <div class="step-item completed" id="step-intake">
+          <div class="step-number">&#10003;</div>
+          <div class="step-content">
+            <div class="step-name">1. Resume Intake</div>
+            <div class="step-detail" id="step-intake-detail">Uploaded &amp; Parsed</div>
+          </div>
+        </div>
+        <div class="step-item active" id="step-screening">
+          <div class="step-number" id="step-screening-num">2</div>
+          <div class="step-content">
+            <div class="step-name">2. AI Screening</div>
+            <div class="step-detail" id="step-screening-detail">90% Match Score</div>
+          </div>
+        </div>
+        <div class="step-item" id="step-assessment">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-name">3. Pre-Assessment</div>
+            <div class="step-detail" id="step-assessment-detail">Ready to Trigger</div>
+          </div>
+        </div>
+        <div class="step-item" id="step-interview">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-name">4. AI Interview</div>
+            <div class="step-detail">Proctored Q&amp;A</div>
+          </div>
+        </div>
+        <div class="step-item" id="step-decision">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <div class="step-name">5. Final Offer</div>
+            <div class="step-detail">Hiring Committee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Main Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Hero Card -->
+      <div class="hero-card">
+        <div class="avatar-wrapper">
+          <div class="avatar" id="avatar-initials">SC</div>
+        </div>
+        <h2 class="candidate-name" id="candidate-name">Shivam Chopade</h2>
+        <div class="target-role">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span id="candidate-role">Backend / AI Engineer</span>
+        </div>
+
+        <!-- Animated SVG Radial Gauge -->
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 180 180">
+            <circle class="gauge-bg" cx="90" cy="90" r="80"></circle>
+            <circle class="gauge-progress" id="score-gauge" cx="90" cy="90" r="80"></circle>
+          </svg>
+          <div class="gauge-content">
+            <div class="gauge-value" id="score-num">90</div>
+            <div class="gauge-max">OUT OF 100</div>
+          </div>
+        </div>
+
+        <!-- Verdict Pill -->
+        <div class="verdict-pill strong_match" id="verdict-pill">
+          <span id="verdict-text">STRONG MATCH</span>
+        </div>
+
+        <!-- Shortlist Banner -->
+        <div class="shortlist-banner passed" id="shortlist-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="shortlist-icon">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span id="shortlist-status-text">SHORTLISTED FOR INTERVIEW</span>
+        </div>
+
+        <!-- Quick 2x2 Stats -->
+        <div class="stats-matrix">
+          <div class="stat-box">
+            <div class="stat-label">Relevant Exp</div>
+            <div class="stat-value" id="exp-val">2.5 Yrs</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Min Threshold</div>
+            <div class="stat-value">60 Pts</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Core Skills</div>
+            <div class="stat-value" id="skills-count">7 Matched</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Safety Audit</div>
+            <div class="stat-value" id="safety-val">0 Flags</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Content -->
+      <div class="content-area">
+        
+        <!-- Executive AI Recruiter Summary -->
+        <div class="summary-card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            AI Recruiter Synthesis &amp; Justification
+          </div>
+          <blockquote class="summary-quote" id="recruiter-summary">
+            Candidate has 2+ years of professional engineering experience with strong Python, REST APIs, Git, and LLM integrations matching the Backend Python Engineer qualifications. Strong fit for the recruitment automation team.
+          </blockquote>
+        </div>
+
+        <!-- Matched vs Missing Requirements -->
+        <div class="eval-split-grid">
+          
+          <!-- Matched -->
+          <div class="eval-panel">
+            <div class="eval-panel-header">
+              <span class="eval-panel-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Satisfied Requirements
+              </span>
+              <span class="eval-count matched" id="matched-count">5 Satisfied</span>
+            </div>
+            <ul class="req-list" id="matched-reqs-list">
+              <!-- Rendered via JS -->
+            </ul>
+          </div>
+
+          <!-- Missing -->
+          <div class="eval-panel">
+            <div class="eval-panel-header">
+              <span class="eval-panel-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Missing or Gaps
+              </span>
+              <span class="eval-count missing" id="missing-count">0 Missing</span>
+            </div>
+            <ul class="req-list" id="missing-reqs-list">
+              <!-- Rendered via JS -->
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Skills Matrix -->
+        <div class="skills-section">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            Verified Matching Technical Skills
+          </div>
+          <div class="skills-cloud" id="skills-cloud">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Red Flags / Audit -->
+        <div class="audit-section">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Profile Verification &amp; Risk Flags
+          </div>
+          <div id="audit-container">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Terminal Command & Output Replica -->
+    <div class="terminal-section">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <span class="dot-circle dot-red"></span>
+          <span class="dot-circle dot-yellow"></span>
+          <span class="dot-circle dot-green"></span>
+        </div>
+        <span class="terminal-title">python -m screening.main &bull; Output Inspector</span>
+        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.72rem;" onclick="copyRawJSON()">
+          Copy JSON
+        </button>
+      </div>
+      <div class="terminal-body" id="raw-json-view">
+        <!-- JSON formatted string -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal for Pasting Custom Terminal JSON -->
+  <div class="modal-backdrop" id="paste-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Paste Terminal Output / JSON</h3>
+        <button class="btn-close" onclick="closePasteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">
+          Paste the JSON printed in your terminal by <code>python -m screening.main</code> below. The dashboard will parse and render it automatically:
+        </p>
+        <textarea class="modal-textarea" id="paste-input" placeholder='{
+  "overall_score": 90,
+  "verdict": "strong_match",
+  "matched_requirements": [...],
+  "missing_requirements": [...],
+  "matched_skills": [...],
+  "years_relevant_experience": 2.5,
+  "red_flags": [],
+  "summary": "..."
+}'></textarea>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closePasteModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="applyPastedJSON()">Load &amp; Render</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample Resume Files Raw Texts
+    const SAMPLES = {
+      shivam: {
+        filename: "samples/sample_resume.txt",
+        text: `Shivam Chopade
+Backend / AI Engineer
+
+Experience
+Software Engineer, 2023–present
+- Built Python services for document intake and candidate screening
+- Integrated Groq LLM APIs to score resumes against job descriptions
+- Shipped REST APIs consumed by an internal dashboard
+- Parsed PDF and DOCX files with pypdf and python-docx
+
+Junior Developer, 2022–2023
+- Maintained Python automation scripts and Git-based code reviews
+- Wrote technical notes for internal tooling
+
+Skills
+Python, REST APIs, Git, PostgreSQL, Docker, LLM APIs, PDF parsing
+
+Education
+B.E. Computer Engineering`
+      },
+      priya: {
+        filename: "samples/weak_resume.txt",
+        text: `Priya Shah
+Retail Associate
+
+Experience
+Store Associate, 2024–present
+- Helped customers at the checkout counter
+- Restocked shelves and handled cash
+
+Skills
+MS Word, customer service, inventory counting
+
+Education
+High school diploma`
+      }
+    };
+
+    // Candidate Profiles Database
+    const CANDIDATES = {
+      shivam: {
+        name: "Shivam Chopade",
+        role: "Backend / AI Engineer",
+        initials: "SC",
+        filename: "samples/sample_resume.txt",
+        result: {
+          overall_score: 90,
+          verdict: "strong_match",
+          matched_requirements: [
+            "2+ years of professional software engineering experience",
+            "Strong Python (APIs, data processing, or automation)",
+            "Experience with REST APIs",
+            "Familiarity with Git and code reviews",
+            "Ability to write clear documentation"
+          ],
+          missing_requirements: [],
+          matched_skills: [
+            "Python",
+            "REST APIs",
+            "Git",
+            "PostgreSQL",
+            "Docker",
+            "LLM APIs",
+            "PDF Parsing"
+          ],
+          years_relevant_experience: 2.5,
+          red_flags: [],
+          summary: "Candidate has 2+ years of professional engineering experience with strong Python, REST APIs, Git, and LLM integrations matching the Backend Python Engineer qualifications. Strong fit for the recruitment automation team."
+        }
+      },
+      alex: {
+        name: "Alex Rivera",
+        role: "Junior Python Developer",
+        initials: "AR",
+        filename: "samples/alex_rivera_resume.txt",
+        result: {
+          overall_score: 68,
+          verdict: "possible_match",
+          matched_requirements: [
+            "Strong Python (APIs, data processing, or automation)",
+            "Experience with REST APIs",
+            "Familiarity with Git and code reviews"
+          ],
+          missing_requirements: [
+            "2+ years of professional software engineering experience (candidate has ~1.2 years)"
+          ],
+          matched_skills: [
+            "Python",
+            "Flask REST APIs",
+            "Git",
+            "PostgreSQL"
+          ],
+          years_relevant_experience: 1.2,
+          red_flags: [],
+          summary: "Promising junior developer meeting core Python and API skills, but falls slightly short of the 2+ years minimum professional requirement. Recommended for pre-interview coding assessment."
+        }
+      },
+      priya: {
+        name: "Priya Shah",
+        role: "Retail Associate",
+        initials: "PS",
+        filename: "samples/weak_resume.txt",
+        result: {
+          overall_score: 18,
+          verdict: "no_match",
+          matched_requirements: [],
+          missing_requirements: [
+            "2+ years of professional software engineering experience",
+            "Strong Python (APIs, data processing, or automation)",
+            "Experience with REST APIs",
+            "Familiarity with Git and code reviews",
+            "Ability to write clear documentation"
+          ],
+          matched_skills: [
+            "Customer Service",
+            "MS Word"
+          ],
+          years_relevant_experience: 0,
+          red_flags: [
+            "Domain mismatch: Background in retail checkout and inventory without software engineering coursework or technical experience."
+          ],
+          summary: "Candidate's background is strictly in retail operations with zero software engineering, Python, or API experience. Fundamentally unqualified for the Backend Python Engineer role."
+        }
+      }
+    };
+
+    let currentCandidateData = CANDIDATES.shivam;
+    let currentUploadedText = SAMPLES.shivam.text;
+    let currentUploadedFileName = "samples/sample_resume.txt";
+
+    // Scroll to upload section helper
+    function scrollToUpload() {
+      document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Toggle resume text preview panel
+    function toggleResumePreview() {
+      const panel = document.getElementById('resume-preview-panel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Drag & Drop event bindings
+    const dropzone = document.getElementById('dropzone');
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        handleFileSelect(files);
+      }
+    });
+
+    // Handle user selecting or dropping file
+    function handleFileSelect(files) {
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      currentUploadedFileName = file.name;
+
+      if (file.name.endsWith('.txt')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          currentUploadedText = event.target.result;
+          updateIntakeUI(file.name, currentUploadedText);
+          analyzeUploadedResume(file.name, currentUploadedText);
+        };
+        reader.readAsText(file);
+      } else {
+        // For PDF or DOCX
+        currentUploadedText = `[Binary Document Intake: ${file.name}]\nFile size: ${(file.size / 1024).toFixed(1)} KB\nFormat: ${file.name.split('.').pop().toUpperCase()}\n\nNote: In Business Automation OS, PDF & DOCX files are parsed via pypdf and python-docx using screening.resume_parser.`;
+        updateIntakeUI(file.name, currentUploadedText);
+        analyzeUploadedResume(file.name, currentUploadedText);
+      }
+    }
+
+    // Fast-load repository sample files
+    function loadSampleResume(key) {
+      if (SAMPLES[key]) {
+        currentUploadedFileName = SAMPLES[key].filename;
+        currentUploadedText = SAMPLES[key].text;
+        updateIntakeUI(currentUploadedFileName, currentUploadedText);
+        loadCandidate(key);
+      }
+    }
+
+    // Update the Intake UI box & preview drawer
+    function updateIntakeUI(filename, text) {
+      const charCount = text ? text.length : 0;
+      document.getElementById('loaded-file-name').textContent = `${filename} (${charCount} chars)`;
+      document.getElementById('preview-file-title').textContent = `Resume Content: ${filename}`;
+      document.getElementById('preview-char-count').textContent = `${charCount} characters`;
+      document.getElementById('resume-preview-text').textContent = text;
+      document.getElementById('resume-preview-panel').style.display = 'block';
+    }
+
+    // Intelligent evaluation for custom uploaded resumes
+    function analyzeUploadedResume(filename, text) {
+      const lower = text.toLowerCase();
+      
+      // Heuristic extraction
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      const nameCandidate = lines.length > 0 ? lines[0] : "Uploaded Candidate";
+      const roleCandidate = lines.length > 1 ? lines[1] : "Applicant";
+
+      const matchedSkills = [];
+      const coreSkillsList = [
+        "Python", "REST APIs", "Git", "PostgreSQL", "Docker", "LLM APIs", "PDF Parsing", "Docker", "Flask", "FastAPI"
+      ];
+      coreSkillsList.forEach(s => {
+        if (lower.includes(s.toLowerCase())) matchedSkills.push(s);
+      });
+
+      // Experience estimation
+      let expYears = 0;
+      if (lower.includes("present") || lower.includes("2023") || lower.includes("2024")) expYears += 1.5;
+      if (lower.includes("2022") || lower.includes("2021")) expYears += 1.5;
+
+      const satisfiedReqs = [];
+      const missingReqs = [];
+
+      if (expYears >= 2) {
+        satisfiedReqs.push("2+ years of professional software engineering experience");
+      } else {
+        missingReqs.push("2+ years of professional software engineering experience");
+      }
+
+      if (lower.includes("python")) {
+        satisfiedReqs.push("Strong Python (APIs, data processing, or automation)");
+      } else {
+        missingReqs.push("Strong Python (APIs, data processing, or automation)");
+      }
+
+      if (lower.includes("api") || lower.includes("rest")) {
+        satisfiedReqs.push("Experience with REST APIs");
+      } else {
+        missingReqs.push("Experience with REST APIs");
+      }
+
+      if (lower.includes("git")) {
+        satisfiedReqs.push("Familiarity with Git and code reviews");
+      } else {
+        missingReqs.push("Familiarity with Git and code reviews");
+      }
+
+      if (lower.includes("doc") || lower.includes("notes") || lower.includes("clear")) {
+        satisfiedReqs.push("Ability to write clear documentation");
+      } else {
+        missingReqs.push("Ability to write clear documentation");
+      }
+
+      // Calculate score
+      let score = (satisfiedReqs.length * 15) + (matchedSkills.length * 3);
+      if (lower.includes("software") || lower.includes("engineer") || lower.includes("developer")) score += 10;
+      if (lower.includes("retail") || lower.includes("cash") || lower.includes("store")) score = Math.min(score, 25);
+      score = Math.max(10, Math.min(96, Math.round(score)));
+
+      let verdict = "no_match";
+      if (score >= 85) verdict = "strong_match";
+      else if (score >= 60) verdict = "possible_match";
+      else if (score >= 30) verdict = "weak_match";
+
+      const redFlags = [];
+      if (score < 30) {
+        redFlags.push("Candidate background does not show relevant engineering or software experience required for Backend Python Engineer.");
+      }
+
+      const summary = `Uploaded resume evaluation for ${nameCandidate}. Evaluated ${satisfiedReqs.length} core JD requirements satisfied with ${matchedSkills.length} verified technical skills. Verdict: ${verdict.replace('_', ' ')}.`;
+
+      const result = {
+        overall_score: score,
+        verdict: verdict,
+        matched_requirements: satisfiedReqs,
+        missing_requirements: missingReqs,
+        matched_skills: matchedSkills,
+        years_relevant_experience: expYears,
+        red_flags: redFlags,
+        summary: summary
+      };
+
+      // Deselect preset buttons
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+
+      renderDashboard(result, {
+        name: nameCandidate,
+        role: roleCandidate,
+        initials: getInitials(nameCandidate)
+      });
+    }
+
+    function getInitials(name) {
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function triggerScreeningEvaluation() {
+      analyzeUploadedResume(currentUploadedFileName, currentUploadedText);
+      alert(`Screening analysis completed for ${currentUploadedFileName}! Check the score gauge and evaluation panels below.`);
+    }
+
+    function copyTerminalCmd() {
+      const cmd = `python -m screening.main --resume ${currentUploadedFileName} --jd samples/sample_jd.txt`;
+      navigator.clipboard.writeText(cmd).then(() => {
+        alert(`Copied to clipboard:\n${cmd}`);
+      });
+    }
+
+    function renderDashboard(data, candidateMeta = null) {
+      const result = data;
+      const meta = candidateMeta || {
+        name: "Custom Candidate",
+        role: "Evaluated Candidate",
+        initials: "CC"
+      };
+
+      // 1. Meta Details
+      document.getElementById('candidate-name').textContent = meta.name;
+      document.getElementById('candidate-role').textContent = meta.role;
+      document.getElementById('avatar-initials').textContent = meta.initials;
+
+      // 2. Score & Animated Gauge
+      const score = Math.max(0, Math.min(100, result.overall_score || 0));
+      const scoreGauge = document.getElementById('score-gauge');
+      const scoreNum = document.getElementById('score-num');
+      
+      // Animate score number
+      animateValue(scoreNum, parseInt(scoreNum.textContent) || 0, score, 800);
+
+      // Circumference = 2 * PI * 80 ~= 502.65
+      const circumference = 502.65;
+      const offset = circumference - (score / 100) * circumference;
+      scoreGauge.style.strokeDashoffset = offset;
+
+      // Gauge colors based on score
+      if (score >= 85) {
+        scoreGauge.style.stroke = '#10b981';
+      } else if (score >= 60) {
+        scoreGauge.style.stroke = '#38bdf8';
+      } else if (score >= 30) {
+        scoreGauge.style.stroke = '#f59e0b';
+      } else {
+        scoreGauge.style.stroke = '#ef4444';
+      }
+
+      // 3. Verdict Pill
+      const verdictPill = document.getElementById('verdict-pill');
+      const verdictText = document.getElementById('verdict-text');
+      const verdict = (result.verdict || 'unknown').toLowerCase();
+
+      verdictPill.className = 'verdict-pill ' + verdict;
+      verdictText.textContent = verdict.replace('_', ' ').toUpperCase();
+
+      // 4. Shortlist Banner & Pipeline
+      const isShortlisted = score >= 60;
+      const shortlistBanner = document.getElementById('shortlist-banner');
+      const shortlistStatusText = document.getElementById('shortlist-status-text');
+      const shortlistIcon = document.getElementById('shortlist-icon');
+      const pipelineStatusText = document.getElementById('pipeline-status-text');
+      const stepAssessment = document.getElementById('step-assessment');
+      const stepAssessmentDetail = document.getElementById('step-assessment-detail');
+      const stepScreeningDetail = document.getElementById('step-screening-detail');
+
+      stepScreeningDetail.textContent = `${score}% Match Score`;
+
+      if (isShortlisted) {
+        shortlistBanner.className = 'shortlist-banner passed';
+        shortlistStatusText.textContent = 'SHORTLISTED FOR INTERVIEW';
+        shortlistIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+        pipelineStatusText.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Stage 2 Completed &bull; Shortlisted (Proceed to Pre-Assessment)
+        `;
+        pipelineStatusText.style.color = '#10b981';
+        stepAssessment.className = 'step-item';
+        stepAssessmentDetail.textContent = 'Assessment Ready';
+      } else {
+        shortlistBanner.className = 'shortlist-banner failed';
+        shortlistStatusText.textContent = 'NOT SHORTLISTED (BELOW THRESHOLD)';
+        shortlistIcon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
+        pipelineStatusText.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Pipeline Stopped &bull; Candidate Filtered Out
+        `;
+        pipelineStatusText.style.color = '#ef4444';
+        stepAssessment.className = 'step-item';
+        stepAssessmentDetail.textContent = 'Workflow Ended';
+      }
+
+      // 5. 2x2 Stats Matrix
+      document.getElementById('exp-val').textContent = (result.years_relevant_experience ?? 0) + ' Yrs';
+      document.getElementById('skills-count').textContent = (result.matched_skills?.length || 0) + ' Matched';
+      const flagsCount = result.red_flags?.length || 0;
+      document.getElementById('safety-val').textContent = flagsCount === 0 ? '0 Flags' : flagsCount + ' Flags';
+
+      // 6. Recruiter Summary
+      document.getElementById('recruiter-summary').textContent = result.summary || "No evaluation summary provided.";
+
+      // 7. Satisfied Requirements
+      const matchedList = document.getElementById('matched-reqs-list');
+      const matchedReqs = result.matched_requirements || [];
+      document.getElementById('matched-count').textContent = `${matchedReqs.length} Satisfied`;
+      matchedList.innerHTML = '';
+      if (matchedReqs.length > 0) {
+        matchedReqs.forEach(req => {
+          const li = document.createElement('li');
+          li.className = 'req-item satisfied';
+          li.innerHTML = `
+            <svg class="req-icon check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>${escapeHTML(req)}</span>
+          `;
+          matchedList.appendChild(li);
+        });
+      } else {
+        matchedList.innerHTML = `<div class="empty-state-card">No requirements satisfied.</div>`;
+      }
+
+      // 8. Missing Requirements
+      const missingList = document.getElementById('missing-reqs-list');
+      const missingReqs = result.missing_requirements || [];
+      document.getElementById('missing-count').textContent = `${missingReqs.length} Missing`;
+      missingList.innerHTML = '';
+      if (missingReqs.length > 0) {
+        missingReqs.forEach(req => {
+          const li = document.createElement('li');
+          li.className = 'req-item missing';
+          li.innerHTML = `
+            <svg class="req-icon cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>${escapeHTML(req)}</span>
+          `;
+          missingList.appendChild(li);
+        });
+      } else {
+        missingList.innerHTML = `<div class="empty-state-card" style="color: var(--success);">&#10003; All core requirements satisfied without gaps.</div>`;
+      }
+
+      // 9. Matched Skills Cloud
+      const skillsCloud = document.getElementById('skills-cloud');
+      const skills = result.matched_skills || [];
+      skillsCloud.innerHTML = '';
+      if (skills.length > 0) {
+        skills.forEach(skill => {
+          const tag = document.createElement('span');
+          tag.className = 'skill-tag';
+          tag.innerHTML = `<span class="skill-check">&#10003;</span> ${escapeHTML(skill)}`;
+          skillsCloud.appendChild(tag);
+        });
+      } else {
+        skillsCloud.innerHTML = `<div class="empty-state-card">No matching technical skills extracted.</div>`;
+      }
+
+      // 10. Audit / Red Flags
+      const auditContainer = document.getElementById('audit-container');
+      const redFlags = result.red_flags || [];
+      auditContainer.innerHTML = '';
+      if (redFlags.length === 0) {
+        auditContainer.innerHTML = `
+          <div class="audit-clean">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+            <div>
+              <strong>Clean Profile Audit:</strong> No red flags, inconsistencies, or career timeline gaps identified.
+            </div>
+          </div>
+        `;
+      } else {
+        redFlags.forEach(flag => {
+          const div = document.createElement('div');
+          div.className = 'flag-item';
+          div.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div><strong>Alert:</strong> ${escapeHTML(flag)}</div>
+          `;
+          auditContainer.appendChild(div);
+        });
+      }
+
+      // 11. Raw Terminal Output Preview
+      const formattedJSON = JSON.stringify(result, null, 2);
+      document.getElementById('raw-json-view').textContent = 
+`$ python -m screening.main --resume ${currentUploadedFileName} --jd samples/sample_jd.txt
+Parsed resume. Scoring against JD...
+
+${formattedJSON}
+
+Shortlisted: ${isShortlisted}`;
+    }
+
+    // Number animation helper
+    function animateValue(obj, start, end, duration) {
+      if (start === end) {
+        obj.textContent = end;
+        return;
+      }
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.textContent = Math.floor(progress * (end - start) + start);
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          obj.textContent = end;
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Preset Switching
+    function loadCandidate(key) {
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+      const activeBtn = document.getElementById('chip-' + key);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (CANDIDATES[key]) {
+        currentCandidateData = CANDIDATES[key];
+        currentUploadedFileName = currentCandidateData.filename || `samples/${key}_resume.txt`;
+        if (SAMPLES[key]) {
+          currentUploadedText = SAMPLES[key].text;
+          updateIntakeUI(currentUploadedFileName, currentUploadedText);
+        }
+        renderDashboard(currentCandidateData.result, {
+          name: currentCandidateData.name,
+          role: currentCandidateData.role,
+          initials: currentCandidateData.initials
+        });
+      }
+    }
+
+    // Modal Operations
+    function openPasteModal() {
+      document.getElementById('paste-modal').classList.add('open');
+      document.getElementById('paste-input').focus();
+    }
+
+    function closePasteModal() {
+      document.getElementById('paste-modal').classList.remove('open');
+    }
+
+    function applyPastedJSON() {
+      const raw = document.getElementById('paste-input').value.trim();
+      if (!raw) {
+        alert('Please paste some JSON output first.');
+        return;
+      }
+
+      try {
+        let jsonStr = raw;
+        const start = raw.indexOf('{');
+        const end = raw.lastIndexOf('}');
+        if (start !== -1 && end !== -1 && end > start) {
+          jsonStr = raw.substring(start, end + 1);
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+        
+        renderDashboard(parsed, {
+          name: "Terminal Evaluation",
+          role: "Custom Candidate Run",
+          initials: "TE"
+        });
+
+        closePasteModal();
+      } catch (err) {
+        alert('Could not parse JSON. Error: ' + err.message + '\n\nPlease ensure you copy the complete JSON block starting with { and ending with }.');
+      }
+    }
+
+    function copyRawJSON() {
+      const rawText = document.getElementById('raw-json-view').textContent;
+      navigator.clipboard.writeText(rawText).then(() => {
+        alert('Terminal JSON copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCandidate('shivam');
+    });
+  </script>
+</body>
+</html>
